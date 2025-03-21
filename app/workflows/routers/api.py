@@ -7,7 +7,7 @@ from app.libs.openai import getEmbedding
 from app.libs.pinecone import pinecone_index
 from app.customers.models.modelCustomers import Transaction
 
-router = APIRouter(prefix="/customer_data", tags=["customer_data"])
+router = APIRouter(prefix="/workflows", tags=["workflows"])
 
 async def getEmbeddingData(transaction: Transaction):
     response = getEmbedding(transaction.categoryId + " " + transaction.payee + " " + str(transaction.amount) + " " + transaction.notes + " " + transaction.accountId)
