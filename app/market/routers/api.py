@@ -1,14 +1,13 @@
 import json
 from fastapi import APIRouter
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 
 from app.libs.openai import getTransaltedText
+from app.market.models.modelMarket import TranslateContent
 
 router = APIRouter(prefix="/market", tags=["market"])
 
 @router.post("/translate")
-def translate(init: dict , target: str):
-    response = getTransaltedText(init, target)
-    transaltedJson = json.loads(response)
-    return transaltedJson
+def translate(content: TranslateContent):
+    response = getTransaltedText(content)
+    transaltedJson = json.loads(response["arguments"])
+    return {"message": "Data translated successfully", "data": transaltedJson}
