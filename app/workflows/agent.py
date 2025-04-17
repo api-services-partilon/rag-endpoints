@@ -8,7 +8,6 @@ PROMPT = (
     "The task components include:"
     "- Task Name"
     "- Task Description"
-    "- Task Due Date (in ISO format: YYYY-MM-DD, next week from today)"
     "- Task Assignee (is the person who inserted the project description)"
     "- Task Status"
 )
@@ -16,7 +15,6 @@ PROMPT = (
 class TaskOutput(BaseModel):
     name: str
     description: str
-    due_date: str
     assignee: str
     status: str
 
