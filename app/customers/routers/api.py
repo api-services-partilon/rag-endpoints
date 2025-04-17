@@ -1,4 +1,3 @@
-from typing import Any
 from agents import Runner
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse

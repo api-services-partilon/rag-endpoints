@@ -1,61 +1,22 @@
-from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
-
-from app.libs.openai import getEmbedding
-from app.libs.pinecone import pinecone_index
-from app.customers.models.modelCustomers import Transaction
+from app.workflows.agent import agent
+from agents import Runner
+from pydantic import BaseModel
+from datetime import datetime
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
-async def getEmbeddingData(transaction: Transaction):
-    response = getEmbedding(transaction.categoryId + " " + transaction.payee + " " + str(transaction.amount) + " " + transaction.notes + " " + transaction.accountId)
-    return response
+class ProjectDescription(BaseModel):
+    description: str
+    assignee: str
 
-@router.post("/store_data")
-async def store_data(record: Transaction):
-    embeddingData = await getEmbeddingData(record)
+@router.post("/create")
+async def create(projectDescription: ProjectDescription):
     try:
-        pinecone_index.upsert(
-            namespace= "ns1",
-            vectors=[
-                {
-                    "id": record.id,
-                    "values": embeddingData,
-                    "metadata": {
-                        "date": record.date.timestamp(),
-                        "category": record.category,
-                        "payee": record.payee,
-                        "account": record.account
-                    }
-                }
-            ]
-        )
-        return {"message": "Data stored successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))     
-
-@router.post("/specific_data")
-async def get_specific_data(start_date: datetime, end_date: datetime, input: str):
-    try:
-        embeddingData = getEmbedding(input)
-        print(start_date.timestamp() , end_date.timestamp())
-        response = pinecone_index.query(
-            namespace="ns1",
-            vector=embeddingData,
-            top_k=10000,
-            filter={
-                "date": {
-                    "$gte": start_date.timestamp(),
-                    "$lte": end_date.timestamp()
-                }
-            },
-            include_metadata=True,
-            include_values=False
-        )
-        response_dict = response.to_dict()
-        response_encode = jsonable_encoder(response_dict)
-        return JSONResponse(content=response_encode['matches'], status_code=200)
+        description = f"{projectDescription.description} + assignee: {projectDescription.assignee}"
+        result = await Runner.run(agent, description)
+        print(datetime.now())
+        return JSONResponse(content={"tasks": result.final_output.dict()}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
