@@ -1,5 +1,4 @@
 from agents import Agent, ItemHelpers, MessageOutputItem, Runner, trace
-from pydantic import BaseModel
 
 spanish_agent = Agent(
     name="spanish_agent",
@@ -24,7 +23,8 @@ orchestrator_agent = Agent(
     instructions=(
         "You are a translation agent. You use the tools given to you to translate."
         "If asked for multiple translations, you call the relevant tools in order."
-        "You never translate on your own, you always use the provided tools."
+        "You never translate on your own, you always use the provided tools." \
+        "The output is only 'Content' attribute"
     ),
     tools=[
         spanish_agent.as_tool(
@@ -47,15 +47,6 @@ synthesizer_agent = Agent(
     instructions="You inspect translations, correct them if needed, and produce a final concatenated response.",
 )
 
-class JSONModel(BaseModel):
-    content: dict[str, str]
-
-json_formatter_agent = Agent(
-    name="json_formatter_agent",
-    instructions="You format the user's message into a JSON object.",
-    output_type=JSONModel
-)
-
 async def useAgents(msg: str):
     with trace("Orchestrator evaluator"):
         orchestrator_result = await Runner.run(orchestrator_agent, msg)
@@ -70,8 +61,4 @@ async def useAgents(msg: str):
             synthesizer_agent, orchestrator_result.to_input_list()
         )
 
-        json_result = await Runner.run(
-            json_formatter_agent, synthesizer_result.final_output
-        )
-
-    return json_result.final_output
+    return synthesizer_result

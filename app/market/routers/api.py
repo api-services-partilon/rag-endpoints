@@ -14,6 +14,6 @@ async def translate(request: TranslateRequest):
     try:
         convert = f'"{request}"'
         translation = await useAgents(convert)
-        return JSONResponse(content={"translation": translation}, status_code=200)
+        return JSONResponse(content={"translation": translation.final_output}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
