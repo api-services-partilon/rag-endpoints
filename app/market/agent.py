@@ -47,13 +47,9 @@ synthesizer_agent = Agent(
     instructions="You inspect translations, correct them if needed, and produce a final concatenated response.",
 )
 
-class JSONModel(BaseModel):
-    content: dict[str, str]
-
 json_formatter_agent = Agent(
     name="json_formatter_agent",
     instructions="You format the user's message into a JSON object.",
-    output_type=JSONModel
 )
 
 async def useAgents(msg: str):
@@ -74,4 +70,4 @@ async def useAgents(msg: str):
             json_formatter_agent, synthesizer_result.final_output
         )
 
-    return json_result.final_output
+    return json_result
