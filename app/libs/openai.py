@@ -1,10 +1,7 @@
-from typing import Any
 from openai import OpenAI
 from fastapi import HTTPException
-from pydantic import Json
 
 from app.config import settings
-from app.market.models.modelMarket import TranslateContent
 
 openaiSk = settings.openai_api_key
 if not openaiSk:
@@ -14,7 +11,7 @@ openai = OpenAI(api_key=openaiSk)
 
 def getEmbedding(text: str):
     response = openai.embeddings.create(
-        model="text-embedding-3-small",
+        model="text-embedding-ada-002",
         input=text
     )
 
@@ -24,65 +21,6 @@ def getEmbedding(text: str):
         raise HTTPException(status_code=404, detail="Embedding not found")
 
     return embeddingData
-
-translateTools = [{
-    "type": "function",
-    "name": "translated-text",
-    "description": "Translate a text into a target language and check if the language matches the ISO 639-1 or ISO 639-2 or ISO Language Names.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "content": {
-                "type": "object",
-                "properties": {
-                    "description": {
-                        "type": "string",
-                        "description": "The description of the content and the target text to be translated."
-                    },
-                    "resources": {
-                        "type": "object",
-                        "properties": {
-                            "resourcesName": {
-                                "type": "string",
-                                "description": "The name of the resource."
-                            },
-                            "method": {
-                                "type": "string",
-                                "description": "The method of the resource."
-                            },
-                            "description": {
-                                "type": "string",
-                                "description": "The description of the resource and the target text to be translated."
-                            }
-                        }
-                    }
-                }
-            },
-            "language": {
-                "type": "string",
-                "description": "The target language to translate to."
-            }
-        },
-        "required": ["content", "language"]
-    }
-}]
-
-def getTransaltedText(content: TranslateContent):
-    response = openai.responses.create(
-        model="gpt-4o",
-        input=[{
-            "role": "system",
-            "content": content.model_dump_json()
-        }],
-        tools=translateTools
-    )
-
-    translatedText = response.output
-
-    if translatedText is None:
-        raise HTTPException(status_code=404, detail="Translation not found")
-
-    return translatedText
 
 workflowTools = [{
     "type": "function",
