@@ -2,20 +2,26 @@ from agents import Agent, ItemHelpers, MessageOutputItem, Runner, trace
 
 spanish_agent = Agent(
     name="spanish_agent",
-    instructions="You translate the user's message to Spanish",
-    handoff_description="An english to spanish translator",
+    instructions="You translate the user's 'description' attributes to Spanish",
+    handoff_description="An target language to spanish translator",
 )
 
 english_agent = Agent(
     name="english_agent",
-    instructions="You translate the user's message to English",
-    handoff_description="An english to english translator",
+    instructions="You translate the user's 'description' attributes to English",
+    handoff_description="An target language to english translator",
 )
 
 thai_agent = Agent(
     name="thai_agent",
-    instructions="You translate the user's message to Thai",
-    handoff_description="An english to thai translator",
+    instructions="You translate the user's 'description' attributes to Thai",
+    handoff_description="An target language to thai translator",
+)
+
+korean_agent = Agent(
+    name="korea_agent",
+    instructions="You translate the user's 'description' attributes to Korean",
+    handoff_description="An target language to korean translator"
 )
 
 orchestrator_agent = Agent(
@@ -24,20 +30,20 @@ orchestrator_agent = Agent(
         "You are a translation agent. You use the tools given to you to translate."
         "If asked for multiple translations, you call the relevant tools in order."
         "You never translate on your own, you always use the provided tools." \
-        "The output is only 'Content' attribute"
+        "The output is only 'Content' object"
     ),
     tools=[
         spanish_agent.as_tool(
             tool_name="translate_to_spanish",
-            tool_description="Translate the user's message to Spanish",
+            tool_description="Translate the user's 'description' attributes to Spanish",
         ),
         english_agent.as_tool(
             tool_name="translate_to_english",
-            tool_description="Translate the user's message to English",
+            tool_description="Translate the user's 'description' attributes to English",
         ),
         thai_agent.as_tool(
             tool_name="translate_to_thai",
-            tool_description="Translate the user's message to Thai",
+            tool_description="Translate the user's 'description' attributes to Thai",
         ),
     ],
 )
