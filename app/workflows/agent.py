@@ -8,17 +8,17 @@ PROMPT = (
     "Your job is to analyze the description and generate a clear list of tasks. "
     "Each task should include the following fields:\n"
     "- Task Name\n"
-    "- Task Status (choose from: Backlog, In Progress, In Review, Todo, Done)\n"
+    "- Task Status (choose from: BACKLOG, IN_PROGRESS, IN_REVIEW, TODO, DONE)\n"
     "- Due Date (set to one week from today's date)\n\n"
     "Please return the tasks in a structured JSON format, as a list of objects with the specified fields."
 )
 
 class TaskStatus(str, Enum):
-    backlog = "Backlog"
-    in_progress = "In Progress"
-    in_review = "In Review"
-    todo = "Todo"
-    done = "Done"
+    BACKLOG = "BACKLOG"
+    IN_PROGRESS = "IN_PROGRESS"
+    IN_REVIEW = "IN_REVIEW"
+    TODO = "TODO"
+    DONE = "DONE"
 
 class TaskOutput(BaseModel):
     name: str
