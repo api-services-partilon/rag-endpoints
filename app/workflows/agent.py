@@ -9,7 +9,7 @@ PROMPT = (
     "Each task should include the following fields:\n"
     "- Task Name\n"
     "- Task Status (choose from: BACKLOG, IN_PROGRESS, IN_REVIEW, TODO, DONE)\n"
-    "- Due Date (set to one week from today's date)\n\n"
+    "- Due Date (set to one week from today's date if not specified)\n\n"
     "Please return the tasks in a structured JSON format, as a list of objects with the specified fields."
 )
 
@@ -23,7 +23,7 @@ class TaskStatus(str, Enum):
 class TaskOutput(BaseModel):
     name: str
     status: TaskStatus
-    due_date: str
+    dueDate: str
 
 agent = Agent(
     name="task_creator_agent",
