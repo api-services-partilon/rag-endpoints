@@ -22,11 +22,11 @@ async def create(projectDescription: ProjectDescription):
         parsed_tasks = []
         for task in tasks:
             try:
-                parsed_date = datetime.strptime(task.due_date, "%Y-%m-%d")
+                parsed_date = datetime.strptime(task.dueDate, "%Y-%m-%d")
                 parsed_tasks.append({
                     "name": task.name,
                     "status": task.status,
-                    "due_date": parsed_date.strftime("%Y-%m-%d")
+                    "dueDate": parsed_date.strftime("%Y-%m-%d")
                 })
             except ValueError:
                 raise HTTPException(
